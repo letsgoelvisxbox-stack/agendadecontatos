@@ -1,0 +1,38 @@
+compile = "javac -cp .:lib/postgresql-42.7.3.jar --module-path javafx-sdk-18.0.2/lib --add-modules javafx.controls Main.java"
+run = "java -cp .:lib/postgresql-42.7.3.jar --module-path javafx-sdk-18.0.2/lib --add-modules javafx.controls Main"
+
+entrypoint = "Main.java"
+hidden = ["**/*.class", "javafx-sdk-18.0.2", "lib/postgresql-42.7.3.jar"]
+modules = ["postgresql-16"]
+
+[unitTest]
+language = "java"
+
+[nix]
+channel = "stable-22_11"
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Run Java App"
+
+[[workflows.workflow]]
+name = "Run Java App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "javac -d . -cp \"lib/*\" Main.java Controller/ContatoController.java View/ContatoView.java Db/Database.java Model/Contato.java && java -cp \".:lib/*\" Main"
+
+[workflows.workflow.metadata]
+outputType = "console"
